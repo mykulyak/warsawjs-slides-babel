@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>WarsawJS Slides: Babel.js</title>
+    <title>WarsawJS Slides: Babel.js - a (not so) short introduction</title>
 
     <meta charset="utf-8"/>
     <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -14,6 +14,32 @@
     <!-- Prism.js -->
     <link rel="stylesheet" href="vendors/prism/prism.css"/>
     <link rel="stylesheet" href="vendors/prism/custom-prism.css"/>
+
+    <style>
+        p {
+            line-height: 1.5;
+        }
+
+        p.lightbulb {
+        }
+
+        p.lightbulb:before {
+            content: '';
+            background-image: url('pictures/idea_24.png');
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+        }
+
+        .slide pre code {
+            line-height: 1.25;
+        }
+
+        dt {
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body class="shower list">
 <header class="caption">
@@ -35,13 +61,14 @@
         <h2>Andriy Mykulyak</h2>
 
         <!-- 3. Presentation title -->
-        <h2><strong>"Babel.js"</strong></h2>
+        <h2><strong>"Babel.js - a (not so) short introduction"</strong></h2>
 
         <!-- 4. Presentation date -->
         <h2>2017-07-12</h2>
 
         <!-- 5. Contact the speaker -->
         <h2>
+            <a href="https://twitter.com/amykulyak">@amykulyak</a>
             <a href="https://www.linkedin.com/in/andriy-mykulyak-b0001a26">LinkedIn</a>
             <a href="mailto:mykulyak@gmail.com">Gmail</a>
         </h2>
@@ -52,16 +79,19 @@
     <div>
         <h2>Who am I ?</h2>
 
-        <h3 itemprop="jobTitle">IT Expert in the Departament of Electronic Banking Applications</h3>
+        <h3 itemprop="jobTitle">Senior software consultant</h3>
 
         <p itemscope itemtype="https://schema.org/Organization">
-            <span itemprop="name">PKO BP</span>,
+            <span itemprop="name">@ <a href="http://www.shedul.com/">Shedul.com</a></span>,
             <span itemprop="location">Warsaw</span>
         </p>
 
         <p>
-            <span itemprop="knows">Full stack developer. Likes challenges. Wants to finish in <a
-                    href="https://en.wikipedia.org/wiki/Ironman_Triathlon">Ironman</a>.</span><br/>
+            <span itemprop="knows">
+                Full stack developer. Like challenges, JavaScript and Python.
+                <br/>
+                Privately is passionate about triathlon.
+            </span>
         </p>
 
         <p class="note">"Do. Or do not. There is no try" (c) Yoda</p>
@@ -69,14 +99,332 @@
 </section>
 
 <section class="slide">
-    <h2>What is Babel ?</h2>
+    <h2>What is Babel.js ?</h2>
+    <p>Babel is a JavaScript transpiler.</p>
+    <p>Sure, it can convert ES8 code to ES5 <span class="next">... but not only !</span></p>
+    <p class="next">
+        It is essentially <a href="https://babeljs.io/blog/2015/02/15/not-born-to-die" target="_blank">a platform
+        for developing future EcmaScript language and tooling</a>.
+    </p>
+</section>
+
+<section class="slide">
+    <h2>Why use Babel ?</h2>
+    <ul>
+        <li>Can use future language features and APIs before browsers and Node will support them</li>
+        <li class="next">
+            Understands
+            <a href="https://facebook.github.io/react/docs/introducing-jsx.html">JSX</a> and
+            <a href="https://flow.org/">Flow</a> support, TypeScript support
+            <a href="https://github.com/babel/babylon/issues/320">to come</a>.
+        </li>
+        <li class="next">Integrates well with IDEs and other tools</li>
+        <li class="next">Can do some refactoring much more quickly</li>
+        <li class="next">Extremely extensible</li>
+    </ul>
+</section>
+
+<section class="slide">
+    <h2>How it works ?</h2>
+    <p>A figure illustrating babel.js pipeline</p>
+</section>
+
+
+<section class="slide">
+    <h2>Usage</h2>
+
+    <ul>
+        <li>command line</li>
+        <li>require() hook</li>
+        <li>API</li>
+    </ul>
+</section>
+
+<section class="slide">
+    <h2>Command line usage - babel</h2>
+    <pre>
+        <code class="language-javascript">
+            > npm install babel-cli
+            > babel inscript.js -o outscript.js // transpile
+            > babel indir -o outfile.js // transpile & concatenate
+            > babel --watch indir -o outscript.js // watch & transpile & concatenate
+        </code>
+    </pre>
+    <p><a href="https://babeljs.io/docs/usage/api/#options" target="_blank">Many other options</a> are allowed.</p>
+    <p class="lightbulb">
+        Often used in <code>prepublish</code> scripts for packages targeted to Node runtime.
+        Watch mode is useful when working on multiple "ad-hoc" scripts
+    </p>
+</section>
+
+<section class="slide">
+    <h2>Command line usage - babel-node</h2>
+    <pre>
+        <code class="language-javascript">
+            > npm install babel-node
+
+            > babel-node es8-script.js
+        </code>
+    </pre>
+    <p>It is like a <code>node</code> with <code>babel</code> inside. Mostly for one-off scripts ...</p>
+</section>
+
+<section class="slide">
+    <h2>Using via babel-register</h2>
+    <pre>
+        <code class="language-javascript line-numbers">
+            // entry-point.js - still have to use require()
+            require('babel-register');
+            require('./es8-script.js');
+
+            // es8-script.js - magic happens here
+            console.log('123'.padStart(6, ' '));
+        </code>
+    </pre>
+    <p>
+        Babel intercepts require() calls and transpiles modules on the fly.
+        Transpiled modules are cached on disk. This mechanism does not work in a browser.
+    </p>
+</section>
+
+<section class="slide">
+    <h2>Using API</h2>
+    <pre>
+        <code class="language-javascript line-numbers">
+            import babel from 'babel-core';
+
+            const {
+                code, // resulting code
+                map, // source map
+                ast // resulting AST (abstract syntaxt tree)
+            } = babel.transform(sourceCode, options);
+        </code>
+    </pre>
+    <p>How AST <a href="http://astexplorer.net/" target="_blank">looks</a> like.</p>
+</section>
+
+<section class="slide">
+    <h2>Other top-level API</h2>
+    <pre>
+        <code class="language-javascript line-numbers">
+            babel.transformFile(filename, options, callback);
+
+            const { code, map, ast } =
+                babel.transformFileSync(filename, options);
+
+            const { code, map, ast } =
+                babel.transformFromAST(ast, code, options);
+        </code>
+    </pre>
+</section>
+
+<section class="slide">
+    <h2>Configuration</h2>
+    <p>By default Babel.js does nothing ...</p>
+    <p>... because all the power is in plugins !</p>
+    <p>... and before using, one should configure them !</p>
+    <ul>
+        <li><code>.babelrc</code> - preferred way</li>
+        <li><code>package.json</code></li>
+        <li><code>babel-register</code></li>
+    </ul>
+</section>
+
+<section class="slide">
+    <h2>Configuration via .babelrc</h2>
+    <pre>
+        <code class="language-javascript line-numbers">
+            {
+                "presets": ["env", "react"],
+                "env": {
+                    "production": {
+                        // strip assertions & minify
+                        "plugins": ["babel-plugin-unassert"],
+                        "presets": ["babili", "env", "react"]
+                    }
+                },
+                ...
+            }
+        </code>
+    </pre>
+</section>
+
+<section class="slide">
+    <h2>Configuration via .babelrc</h2>
+    <p>
+        <code>.babelrc</code> is a <a href="http://json5.org/">JSON5</a> (user-friendly JSON). Babel 7 should
+        support configuration in JavaScript - <code>.babelrc.js</code>
+    </p>
+    <p class="lightbulb">
+        <em>Order of plugins and presets does matter !</em> Plugins runs firstly in left-to-right order in the
+        configuration, presets run after plugins in the right-to-left order.
+    </p>
+</section>
+
+<section class="slide">
+    <h2>Multiple .babelrc files</h2>
+    <pre>
+        <code class="language-javascript">
+            /src
+                // top-level .babelrc is used here
+                ...
+                /legacy
+                    ...
+                    .babelrc // this file is used for legacy subtree
+                             // which e.g. may have less transforms
+            ...
+            .babelrc
+        </code>
+    </pre>
+</section>
+
+<section class="slide">
+    <h2>Multiple .babelrc files</h2>
+    <p class="lightbulb">If there is more than one .babelrc file, <em>only the "closest" one (up the
+        folder tree) is used</em> !</p>
+    <p class="lightbulb"><em>Helps for projects with several distinct parts</em> (e.g. Express app with
+        client and server parts, legacy subsystem, React code, etc.)</p>
+</section>
+
+<section class="slide">
+    <h2>Configuration in package.json</h2>
+    <pre>
+        <code class="language-javascript line-numbers">
+            {
+                "name": "some-package",
+                "babel": {     // top-level key only
+                    ...
+                },
+                ...
+            }
+        </code>
+    </pre>
+    <p class="lightbulb"><em>Options from </em><code>.babelrc</code><em> have priority</em> over those from
+        <code>package.json</code>.</p>
+</section>
+
+<section class="slide">
+    <h2>Configuration using babel-register</h2>
+    <pre class="language-javascript line-numbers">
+        <code>
+            require('babel-register')({
+                plugins: ['env'],
+                ...
+                ignore: /^ignore-me\/.*\.js$/,
+                only: /^compile-only-me\/.*\.js$/,
+                extensions: ['.js', '.jsx'],
+                cache: true
+            });
+        </code>
+    </pre>
+</section>
+
+<section class="slide">
+    <h2>Plugins</h2>
+    <p>Plugin does some transform</p>
+    <p><code>Preset</code> is a name for group of plugins used simultaneously.</p>
+    <p>Every Babel.js transformation in Babel.js is done by some plugin !</p>
+</section>
+
+<section class="slide">
+    <h2>(Most important) official presets</h2>
+    <ul>
+        <li><code>env</code> takes environment spec and uses corresponding language language spec plugins</li>
+        <li><code>stage-X</code> enables experimental language features from stage X</li>
+        <li><code>react</code> enables parsing and transpiling of JSX files</li>
+        <li><code>flow</code> enables parsing and removal of Flow annotations from resulting code</li>
+    </ul>
+</section>
+
+<section class="slide">
+    <h2>Custom presets</h2>
+    <p>Everyone can create custom presets !</p>
+    <ul>
+        <li>per project type</li>
+        <li>per team</li>
+        <li>per organization</li>
+    </ul>
+    <p>They help enforce consistent environments.</p>
+    <p>Essentially, you need a NPM package with 2 files - package.json and index.js.</p>
+</section>
+
+<section class="slide">
+    <h2>babel-preset-env</h2>
+    <p>Takes target environment specification and the current language standard version to determine plugins needed.</p>
+    <pre>
+        <code class="language-javascript line-numbers">
+            {
+                "plugins": [
+                    ["env", {
+                        "targets": {
+                            "browsers": ["ie > 10", "> 1%"],
+                            "node": "6"
+                        }
+                    }]
+                ]
+            }
+        </code>
+    </pre>
+</section>
+
+<section class="slide">
+    <h2>Custom preset - package.json</h2>
+    <pre>
+        <code class="language-javascript line-numbers">
+            {
+                "name": "@your-scope/babel-preset-your-preset",
+                "version": "1.2.3",
+                ...
+                "dependencies": {
+                    "babel-preset-env": "^1.6.0",
+                    "babel-preset-react": "^6.23.0",
+                    ...
+                }
+            }
+        </code>
+    </pre>
+</section>
+
+<section class="slide">
+    <h2>Custom preset - index.js</h2>
+    <pre>
+        <code class="language-javascript line-numbers">
+            module.exports = {
+                presets: [
+                    ['env', {
+                        targets: {
+                            browsers: ['> 1%']
+                        }
+                    }],
+                    'react'
+                ]
+            };
+        </code>
+    </pre>
+</section>
+
+<section class="slide">
+    <h2>babylon</h2>
+</section>
+
+<section class="slide">
+    <h2>babel-traverse</h2>
+</section>
+
+<section class="slide">
+    <h2>babel-generate</h2>
+</section>
+
+<section class="slide">
+    <h2>Babel plugins</h2>
 </section>
 
 <section class="slide">
     <h2>Useful Links</h2>
     <ul>
         <li><a href="https://babeljs.io/repl/">Babel playground</a></li>
-        <li><a href="http://http://astexplorer.net/">AST explorer</a></li>
+        <li><a href="http://astexplorer.net/">AST explorer</a></li>
+        <li><a href="https://github.com/thejameskyle/babel-handbook">Babel handbook</a></li>
     </ul>
 </section>
 
