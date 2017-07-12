@@ -126,7 +126,13 @@
 
 <section class="slide">
     <h2>How it works ?</h2>
-    <p>A figure illustrating babel.js pipeline</p>
+    <p>Asany compiler, Babel consists of several parts:</p>
+    <ol>
+        <li><em>tokenizer</em> breaks source text into a stream tokens. <code>babylon</code> is the Babel's tokenizer</li>
+        <li class="next"><em>parser</em> assembles Abstract Syntaxt Tree (<a href="http://astexplorer.net/" target="_blank">AST</a>) out of tokens</li>
+        <li class="next">AST is transformed by <em>plugins</em> and <em>presets</em></li>
+        <li class="next"><em>generator</em> produces source code for modified AST (<code>babel-generator</code>)</li>
+    </ol>
 </section>
 
 
@@ -134,6 +140,7 @@
     <h2>Usage</h2>
 
     <ul>
+        <li><a href="https://babeljs.io/repl/" target="_blank">Babel REPL</a></li>
         <li>command line</li>
         <li>require() hook</li>
         <li>API</li>
@@ -255,6 +262,12 @@
         <code>.babelrc</code> is a <a href="http://json5.org/">JSON5</a> (user-friendly JSON). Babel 7 should
         support configuration in JavaScript - <code>.babelrc.js</code>
     </p>
+    <p class="lightbulb">Plugins can have options.</p>
+    <pre class="language-javascript line-numbers">
+        <code>
+            [ "env", { "targets": { "node": "current" } },
+        </code>
+    </pre>
     <p class="lightbulb">
         <em>Order of plugins and presets does matter !</em> Plugins runs firstly in left-to-right order in the
         configuration, presets run after plugins in the right-to-left order.
@@ -321,9 +334,9 @@
 
 <section class="slide">
     <h2>Plugins</h2>
-    <p>Plugin does some transform</p>
-    <p><code>Preset</code> is a name for group of plugins used simultaneously.</p>
+    <p>Plugin do code transformations !</p>
     <p>Every Babel.js transformation in Babel.js is done by some plugin !</p>
+    <p><em>Preset</em> is a name for group of plugins used simultaneously.</p>
 </section>
 
 <section class="slide">
@@ -337,6 +350,25 @@
 </section>
 
 <section class="slide">
+    <h2>babel-preset-env</h2>
+    <p>Takes target environment <a href="http://browserl.ist/" target="_blank">specification</a> and the
+        current language standard version to determine plugins needed. We can in principle stop unsing
+        <code>es20XX</code> presets</p>
+    <pre>
+        <code class="language-javascript line-numbers">
+            "plugins": [
+                ["env", {
+                    "targets": {
+                        "browsers": ["ie > 10", "> 1%"],
+                        "node": "6"
+                    }
+                }]
+            ]
+        </code>
+    </pre>
+</section>
+
+<section class="slide">
     <h2>Custom presets</h2>
     <p>Everyone can create custom presets !</p>
     <ul>
@@ -346,25 +378,6 @@
     </ul>
     <p>They help enforce consistent environments.</p>
     <p>Essentially, you need a NPM package with 2 files - package.json and index.js.</p>
-</section>
-
-<section class="slide">
-    <h2>babel-preset-env</h2>
-    <p>Takes target environment specification and the current language standard version to determine plugins needed.</p>
-    <pre>
-        <code class="language-javascript line-numbers">
-            {
-                "plugins": [
-                    ["env", {
-                        "targets": {
-                            "browsers": ["ie > 10", "> 1%"],
-                            "node": "6"
-                        }
-                    }]
-                ]
-            }
-        </code>
-    </pre>
 </section>
 
 <section class="slide">
@@ -404,19 +417,33 @@
 </section>
 
 <section class="slide">
-    <h2>babylon</h2>
+    <h2>Community plugins</h2>
+    <p>Yesterday there were more than 1700 packages for Babel</p>
+    <ul>
+        <li>integration with IDEs and editors</li>
+        <li>integration with other tools (e.g. <code>babel-eslint</code>)</li>
+        <li>code optimization (<code>babili</code>)</li>
+        <li>code instrumentation (<code>istanbul</code>)</li>
+        <li>codemods - tools for large-scale refactoring</li>
+    </ul>
 </section>
 
 <section class="slide">
-    <h2>babel-traverse</h2>
+    <h2>Community plugins - unassert</h2>
+    <p><code>babel-plugin-unassert</code> - removes assertions from source code</p>
+    <p><code>babel-plugin-react-intl</code> - extracts literals for translation from React projects</p>
+    <p><code>babel-plugin-istanbul</code> - add Instanbul coverage code</p>
 </section>
 
 <section class="slide">
-    <h2>babel-generate</h2>
-</section>
-
-<section class="slide">
-    <h2>Babel plugins</h2>
+    <h2>Other projects</h2>
+    <ul>
+        <li>eslint</li>
+        <li>documentation.js</li>
+        <li>babili</li>
+        <li>recast</li>
+        <li>jscodeshift</li>
+    </ul>
 </section>
 
 <section class="slide">
@@ -434,6 +461,18 @@
 
 <section class="slide">
     <h3 class="shout">See you next month at WarsawJS</h3>
+</section>
+
+<section class="slide">
+    <h2>Codemod power</h2>
+    <p>remove <code>debugger</code> statements</p>
+    <pre class="language-javascript line-numbers"><code>
+        export default function ({ path, source }, { jscodeshift: j }, options) {
+            return j(source).find(j.DebuggerStatement).forEach(path => {
+                j(path).remove();
+            }).toSource();
+        };
+    </code></pre>
 </section>
 
 <div class="progress"></div>
